@@ -15,6 +15,10 @@ struct UserService {
     static let shared = UserService()
     let ref           = Database.database().reference()
     
+    
+    
+    
+ 
 
 //    func fetchStockQuantity(completion: @escaping(StockQuantity,[String]) -> Void) {
 //        ref.child("shirts").observeSingleEvent(of: .value) {(snapshot) in
@@ -28,44 +32,76 @@ struct UserService {
 //        }}
     
     
-//    func fetchShopListingsArray(name:String,completion: @escaping(ShopListingArray) -> Void) {
-//        ref.child("ShopArray").child(name).child(name).observeSingleEvent(of: .value) {(snapshot) in
-//
-//            if snapshot.exists() == true {
-//                guard let snap = snapshot.value as? [String] else {return}
-//                let value = ShopListingArray(array: snap)
-//                completion(value)
-//            }
-//
-//            else {
-//                let value = ShopListingArray(array: [""])
-//                completion(value)
-//            }
-//
-//        }
-//
-//    }
-
-    
     func fetchShopListingsArray(name:String,completion: @escaping(ShopListingArray) -> Void) {
-        ref.child("ShopArray").child(name).observeSingleEvent(of: .value) {(snapshot) in
-                        
+        ref.child("ShopArray").child(name).child(name).observeSingleEvent(of: .value) {(snapshot) in
+
             if snapshot.exists() == true {
-                let snap            = snapshot.value as? NSDictionary
-                guard let values    = snap?.allValues else {return}
-                guard let val       = values as? [String] else {return}
-                let value = ShopListingArray(array: val)
+                guard let snap = snapshot.value as? [String] else {return}
+                let value = ShopListingArray(array: snap)
                 completion(value)
             }
-            
+
             else {
                 let value = ShopListingArray(array: [""])
                 completion(value)
             }
+
+        }
+
+    }
+    
+    
+    func fetchHoldingValuesArray(name:String,completion: @escaping([String]) -> Void) {
+        ref.child("ShopArray").child("\(name)").child("HoldingValues").child("HoldingValues").observeSingleEvent(of: .value) {(snapshot) in
+            
+            if snapshot.exists() == true {
+                print("DEBUG: HOLDING VALUE: = TRUE")
+
+                guard let snap = snapshot.value as? [String] else {return}
+                completion(snap)
+//                print("DEBUG: HOLDING VALUE: = \(snap)")
+
+
+            }
+
+            else {
+                completion([""])
+                print("DEBUG: HOLDING VALUE: = NOT AVAILABLE")
+            }
+        }
+
+    }
+    
+    
+    
+    func fetchShopKeysArray(name:String,completion: @escaping([String]) -> Void) {
+        ref.child("ShopArray").observeSingleEvent(of: .value) {(snapshot) in
+
+            if snapshot.exists() == true {
+                let snap            = snapshot.value as? NSDictionary
+                guard let values    = snap?.allKeys else {return}
+                guard let val       = values as? [String] else {return}
+                
+                completion(val)
+            }
+
+            else {
+                completion([""])
+            }
         }
     }
 
-
+//    
+//    func setNewData() {
+//        let ref = Database.database().reference().child("ShopArray").child("\(key)")
+//        var list = [String]()
+//        ref.observeSingleEvent(of: .value) { (data) in
+//            list = data.value
+//            // insert new data at index 0
+//            // set data
+//            ref.setValue(list)
+//        }
+//    }
 
     
     

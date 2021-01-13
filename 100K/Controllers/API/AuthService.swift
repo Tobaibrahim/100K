@@ -22,6 +22,7 @@ struct AuthService {
     static let shared  = AuthService()
     static let uid     = Auth.auth().currentUser?.uid
     let ref            = Database.database().reference()
+    let cache          = NSCache<NSString,UIImage>()
     
     private init () {}
     
@@ -71,10 +72,9 @@ struct AuthService {
         
     }
     
-    func updateShopListingArray(key:String,value:String) {
-        let identifier = UUID()
-        let values = ["\(identifier)":value]
-        Database.database().reference().child("ShopArray").child("\(key)").updateChildValues(values)
+    func updateShopListingArray(key:String,value:[String]) {
+        let values = [key:value]
+        Database.database().reference().child("ShopArray").child("\(key)").setValue(values)
     }
     
 //    func appendShopListingArray(key:String,value:[String]) {
@@ -93,12 +93,15 @@ struct AuthService {
         
     
     
-    func createShopListingArray(key:String,value:String) {
-        let identifier = UUID()
-        let values = ["\(identifier)":value]
+    func createShopListingArray(key:String,value:[String]) {
+        let values   = [key:value]
         Database.database().reference().child("ShopArray").child("\(key)").updateChildValues(values)
     }
     
+    func createHoldingValues(key:String,value:[String]) {
+        let values  = ["HoldingValues":value]
+        Database.database().reference().child("ShopArray").child("\(key)").child("HoldingValues").updateChildValues(values)
+    }
     
     
     
