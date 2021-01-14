@@ -74,7 +74,7 @@ struct UserService {
     
     
     
-    func fetchShopKeysArray(name:String,completion: @escaping([String]) -> Void) {
+    func fetchShopKeysArray(completion: @escaping([String]) -> Void) {
         ref.child("ShopArray").observeSingleEvent(of: .value) {(snapshot) in
 
             if snapshot.exists() == true {

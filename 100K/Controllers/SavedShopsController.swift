@@ -14,10 +14,13 @@ class SavedShopsController: UIViewController {
     
     // MARK: - Properties
     
+    weak var delegate:ShopSelectionDelegate!
+
+    
     var searchArray           = [String]() // save this to the database/ this changes depending on the shop searched and saved shop selected
     var counts                : [String: Int] = [:]
-    var shopName              = "PlannerKate1"
     var newArrayItems         = [String]()
+    var shopImageUrl          = String() // save url string to database the download image from url???
 
     
     let searchBar:UISearchBar = {
@@ -38,6 +41,8 @@ class SavedShopsController: UIViewController {
         return tv
     }()
     
+    
+    
     var databaseKeysResponse: [String]! {
 
         didSet {
@@ -51,43 +56,7 @@ class SavedShopsController: UIViewController {
     }
     
     
-    var databaseHoldingArray: [String]! {
 
-        didSet {
-            print("DEBUG:DatabaseHoldingArray SET")
-            guard let safeResponse   = databaseHoldingArray else {return}
-            print("DEBUG: DatabaseHoldingArray = \(safeResponse)")
-        }
-
-    }
-    
-    
-    var databaseArrayResponse: ShopListingArray! {
-        
-        didSet {
-            print("DEBUG:DATABASE RESPONSE SET")
-            guard let safeResponse   = databaseArrayResponse else {return}
-            
-            if safeResponse.listingArray == [""] {
-                AuthService.shared.createShopListingArray(key: shopName, value: searchArray)
-                AuthService.shared.createHoldingValues(key: shopName, value: [""])
-            }
-            else {changedIndexValuesFromLoop()}
-            print("DEBUG:DATABASE RESPONSE  = \(safeResponse.listingArray)")
-        }
-        
-    }
-    
-    
-    var networkRequestArrayResponse: ListingsResponse! {
-        
-        didSet {
-            print("DEBUG:DATA RESPONSE SET")
-            guard let safeResponse   = networkRequestArrayResponse else {return}
-            safeResponse.results.forEach { (result) in searchArray.append(result.title)}
-            fetchDatabaseArray()
-        }
-    }
     
     
     // Make a network call and add the latest array of items to the "searchArray" - DONE
@@ -105,124 +74,33 @@ class SavedShopsController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        getShopListings()
+
     }
 
     
     
     // MARK: - Requests
     
-    func getShopListings() { // Search
-        NetworkManager.shared.getListings(for: shopName) { [weak self](results) in
-            guard let self = self else {return}
-            switch results {
-            case .success(let success):
-                self.networkRequestArrayResponse = success
-                
-            case .failure(let error):
-                print("DEBUG: Error = \(error.localizedDescription)")
-            }
-        }
-    }
-    
+   
 
-    // MARK: - Array Algorithm
-    
-    func sortArray() { // tableView
-        
-        guard let safeResponse   = databaseArrayResponse else {return}
-        for item in safeResponse.listingArray {
-            counts[item] = (counts[item] ?? 0) + 1 // this will always tell me how many items are in the array and int value
-        }
-
-        for (key, value) in counts {
-            print("\(key) occurs \(value) time(s)")
-            // use this for tableView
-        }
-        
-    }
-    
-    func changedIndexValuesFromLoop() {
-        validateArray {[weak self](result) in
-            guard let self = self else {return}
-            print("DEBUG: CHANGED INDEX = \(result)")
-            result.forEach { (value) in
-                self.addNewItems(values: value)
-            }
-            print("DEBUG: COUNT = \(self.databaseArrayResponse.listingArray.count)")
-        }
-    }
-    
-    
     // MARK: - Array Validation
 
-    
-    func addNewItems(values:Int) {
-        newArrayItems.append(searchArray[values])
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {AuthService.shared.createHoldingValues(key: self.shopName, value: self.newArrayItems)}
-        var list = databaseArrayResponse.listingArray
-        list.insert(contentsOf: self.newArrayItems, at: 0)
-        
-        AuthService.shared.updateShopListingArray(key: self.shopName, value: (list)) // Find a way to optimise this
-    }
-        
-
-    func validateArray(completion:@escaping([Int]) -> Void){
-        // validates our array and makes sure that its not the same as the previous day.
-        // match the database array to the searched array based on index
-        // returns the index of changes
-        // appends those index arrays to database
-        
-        var changedIndex         = [Int]() // value of index changes
-        guard let safeResponse   = databaseArrayResponse else {return}
-        guard let safeHoldingArrayResponse   = databaseHoldingArray else {return}
-        let databaseArray        = safeResponse.listingArray
-//        let a = safeHoldingArrayResponse + searchArray
-        searchArray.insert(contentsOf: safeHoldingArrayResponse, at: 0)
-        let difference           = databaseArray[0..<searchArray.count - 1].difference(from:searchArray).insertions
-        // returns an array of values that are different in comparison
-        // using 0... allows us to specify from index 0 to the search array max count.
-//        searchArray = a
-        for values in difference { // we have to do this because the enums have the values we need then we append the
-            switch values {
-            case.insert(let offset, _, _):
-                // this case gives me access to the changed values (offset)
-                changedIndex.append(offset)
-            case .remove(offset:_ , element: _, associatedWith:_):
-                break
-            }
-        }
-        
-         completion(changedIndex)
-    }
-    
-    
     
     
     func fetchDatabaseArray() {
         
-        UserService.shared.fetchShopKeysArray(name: shopName) { [weak self] (results) in
+        UserService.shared.fetchShopKeysArray() { [weak self] (results) in
             guard let self = self else {return}
             self.databaseKeysResponse = results
         }
-        
-        UserService.shared.fetchShopListingsArray(name: shopName) {[weak self] (results)  in
-            guard let self = self else {return}
-            self.databaseArrayResponse = results
-        }
-        
-        UserService.shared.fetchHoldingValuesArray(name: shopName) {[weak self] (results) in
-            guard let self = self else {return}
-            self.databaseHoldingArray = results
-
-        }
     }
-
+    
+    
     
     // MARK: - UI
 
     func configureUI() {
-    
+            fetchDatabaseArray()
             let addButton          = UIBarButtonItem(image: SFSymbols.addButton, style: .done, target: self, action:#selector(addButtonPressed))
             addButton.tintColor    = .systemBlue
             view.backgroundColor   = .systemGray5
@@ -248,6 +126,7 @@ class SavedShopsController: UIViewController {
     @objc func addButtonPressed() {
         let destVC           = SearchShopsController()
         let navController    = UINavigationController(rootViewController: destVC)
+        destVC.delegate      = self
         present(navController, animated: true)
     }
     
@@ -263,9 +142,20 @@ extension SavedShopsController:UITableViewDataSource,UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+                
         let cell =  tableView.dequeueReusableCell(withIdentifier: SavedShopCell.reuseID) as! SavedShopCell
         cell.titleLabel.text = databaseKeysResponse[indexPath.row]
+        cell.editImageView.downloadImage(from: shopImageUrl)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let destVC                   = ShopDataController()
+        let path                     = databaseKeysResponse[indexPath.row]
+        print("DEBUG: PATH = \(path)")
+        destVC.shopName              = path
+        let navController            = UINavigationController(rootViewController:destVC)
+        present(navController, animated: true)
     }
     
     
@@ -289,3 +179,23 @@ extension SavedShopsController: UISearchBarDelegate {
     
     
 }
+
+// MARK: - Delegate Methods
+
+extension SavedShopsController:ShopSelectionDelegate {
+    func didAddShop(shopName: String) {
+        AuthService.shared.updateShopListingArray(key: shopName, value: [""] ) // Find a way to optimise this
+        AuthService.shared.createHoldingValues(key: shopName, value: [""])
+        fetchDatabaseArray()
+    }
+}
+
+//extension SavedShopsController:UpdateShopData {
+//    func didAddShopData(shopName: String) {
+//        guard let safeResponse   = databaseArrayResponse else {return}
+//        self.shopName = shopName
+//        getShopListings()
+//        destVC.databaseArrayResponse = safeResponse.listingArray
+//    }
+//
+//}

@@ -23,12 +23,12 @@ override init(frame: CGRect) {
     configure()
 
     self.textAlignment = textAlignment
-    self.font = UIFont.systemFont(ofSize: fontsSize, weight: .light)
+        self.font = UIFont.systemFont(ofSize: fontsSize, weight: .bold)
     }
     
     
     private func configure () {
-        textColor                 = .gray
+        textColor                 = .label
         adjustsFontSizeToFitWidth = true
         font                      = UIFont.preferredFont(forTextStyle: .body)
         minimumScaleFactor        = 0.75

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import SwiftSoup
 
 class NetworkManager {
     
@@ -73,65 +73,8 @@ class NetworkManager {
     }
     
     
-    
-    
-    func getListingShop (for listingId:String,completed:@escaping(Result<ShopResponse,CustomErrors>) -> Void) {
-        
-        let endpoint = baseURL + "shops/listing/\(listingId)?api_key=\(key)"
-        
-        
-        //    print(endpoint)
-        
-        guard let url = URL(string: endpoint) else {
-            completed(.failure(.invalidURL))
-            return
-        }
-        
-        let task = URLSession.shared.dataTask(with: url) {data,response,error in
-            if let _ = error {
-                completed(.failure(.unableToComplete))
-                return
-            }
-            
-            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                completed(.failure(.invalidResponse))
-                return
-                
-            }
-            
-            guard let data = data else {
-                completed(.failure(.invalidDataResponse))
-                return
-            }
-            
-            do {
-                
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                
-                let shop  = try decoder.decode(ShopResponse.self, from: data)
-                
-                completed(.success(shop))
-                print(response.statusCode)
-                
-            }
-            
-            catch {
-                
-                completed(.failure(.invalidDataResponse))
-                print(error)
-                print(data)
-            }
-        }
-        
-        task.resume()
-    }
-    
-    
     func searchShop (for searchShopName:String,pagination:String,completed:@escaping(Result<SearchedShopResponse,CustomErrors>) -> Void) {
-        
-        //            https://openapi.etsy.com/v2/shops?method=GET&api_key=4h5gewvp7n7xrmueku6jbmom&shop_name=amazing&limit=10
-        
+                
         let endpoint = baseURL + "shops?method=GET&api_key=\(key)&shop_name=\(searchShopName)&limit=\(pagination)"
         
         print("DEBUG: SHOP ENDPOINT = \(endpoint)")
@@ -168,7 +111,7 @@ class NetworkManager {
                 print(response.statusCode)
                 
             }
-            
+                
             catch {
                 
                 completed(.failure(.invalidDataResponse))
@@ -178,68 +121,112 @@ class NetworkManager {
         task.resume()
         
         
+    }
         
         
+//
+//        func getAvatarImage (for shop:String,completed:@escaping(Result<AvatarImageResponse,PSTErrors>) -> Void) {
+//
+//            let endpoint = baseURL + "users/\(shop)/avatar/src?api_key=\(key)"
+//
+//            //        /users/:user_id/avatar/src
+//
+//
+//            guard let url = URL(string: endpoint) else {
+//                completed(.failure(.invalidURL))
+//                return
+//            }
+//
+//            let task = URLSession.shared.dataTask(with: url) {data,response,error in
+//                if let _ = error {
+//                    completed(.failure(.unableToComplete))
+//                    return
+//                }
+//
+//                guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+//                    completed(.failure(.invalidResponse))
+//                    return
+//
+//                }
+//
+//                guard let data = data else {
+//                    completed(.failure(.invalidDataResponse))
+//                    return
+//                }
+//
+//                do {
+//
+//                    let decoder = JSONDecoder()
+//                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+//
+//                    let avatarImage  = try decoder.decode(AvatarImageResponse.self, from: data)
+//
+//                    completed(.success(avatarImage))
+//                    print(response.statusCode)
+//
+//                }
+//
+//                catch {
+//
+//                    completed(.failure(.invalidDataResponse))
+//                    print(error)
+//                    //              print(data)
+//            }
+//        }
+//
+//        task.resume()
+//    }
+//
+//
+    
+    
+    func getProfileImage(for ShopName:String,completed:@escaping(Result<String,CustomErrors>) -> Void) {
         
         
-        func getAvatarImage (for shop:String,completed:@escaping(Result<AvatarImageResponse,CustomErrors>) -> Void) {
+        let endpoint = "https://www.etsy.com/uk/shop/\(ShopName)?ref=simple-shop-header-name"
+        
+        guard let url = URL(string: endpoint) else {
             
-            let endpoint = baseURL + "users/\(shop)/avatar/src?api_key=\(key)"
-            
-            //        /users/:user_id/avatar/src
-            
-            
-            guard let url = URL(string: endpoint) else {
-                completed(.failure(.invalidURL))
-                return
-            }
-            
-            let task = URLSession.shared.dataTask(with: url) {data,response,error in
-                if let _ = error {
-                    completed(.failure(.unableToComplete))
-                    return
-                }
-                
-                guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                    completed(.failure(.invalidResponse))
-                    return
-                    
-                }
-                
-                guard let data = data else {
-                    completed(.failure(.invalidDataResponse))
-                    return
-                }
-                
-                do {
-                    
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    
-                    let avatarImage  = try decoder.decode(AvatarImageResponse.self, from: data)
-                    
-                    completed(.success(avatarImage))
-                    print(response.statusCode)
-                    
-                }
-                
-                catch {
-                    
-                    completed(.failure(.invalidDataResponse))
-                    print(error)
-                    //              print(data)
-                }
-            }
-            
-            task.resume()
+            return
         }
         
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            guard let data = data else {
+                print("data was nil")
+                return
+            }
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                completed(.failure(.invalidResponse))
+                return
+            }
+            guard let htmlString = String(data:data,encoding: .utf8) else {
+                print("Couldnt cast data into string")
+                return
+            }
+            do {
+                
+                let html = htmlString
+                
+                let doc:Document  = try SwiftSoup.parse(html)
+                let value = try doc.getElementsByClass("avatar circle user-avatar-external")
+                let src   = try value.attr("src")
+                
+                completed(.success(src))
+                self.scrapedString = src
+            } catch Exception.Error(type: let type, Message: let message) {
+                print(type)
+                print(message)
+            } catch {
+                print("")
+            }
+            
+        }
+        task.resume()
         
-        
-        
-        
+        return
+    }
     }
     
-    
-    
-}
+
+

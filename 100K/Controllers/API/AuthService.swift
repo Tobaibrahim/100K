@@ -74,23 +74,9 @@ struct AuthService {
     
     func updateShopListingArray(key:String,value:[String]) {
         let values = [key:value]
-        Database.database().reference().child("ShopArray").child("\(key)").setValue(values)
+        Database.database().reference().child("ShopArray").child("\(key)").updateChildValues(values)
     }
     
-//    func appendShopListingArray(key:String,value:[String]) {
-//
-//        //let values = [key:value]
-//        Database.database().reference().child("ShopArray").child("\(key)").observeSingleEvent(of: .value) { (snapshot) in
-//            let newArray = [String]()
-//            if !snapshot.exists() {return}
-//            guard let snap = snapshot.value as? [String] else {return}
-//
-//
-//        }
-//
-//
-        
-        
     
     
     func createShopListingArray(key:String,value:[String]) {
@@ -104,6 +90,17 @@ struct AuthService {
     }
     
     
+    
+//    func iniatialCreateShopListingArray(key:String) {
+//        Database.database().reference().child("ShopArray").child("\(key)")
+//    }
+//    
+//    func iniatialCreateHoldingValues(key:String) {
+//        let values  = ["HoldingValues":Any]
+//        Database.database().reference().child("ShopArray").child("\(key)").child("HoldingValues").updateChildValues(values)
+//    }
+//    
+//    
     
     
 

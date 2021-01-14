@@ -28,7 +28,8 @@ class TitleLabel: UILabel {
         textColor                 = .label
         adjustsFontSizeToFitWidth = true
         minimumScaleFactor        = 0.90
-        lineBreakMode             = .byWordWrapping
+        numberOfLines             = 1
+        lineBreakMode             = .byTruncatingTail
         translatesAutoresizingMaskIntoConstraints = false
         
     }

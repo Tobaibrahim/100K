@@ -14,6 +14,9 @@ target '100K' do
    pod 'Firebase/Auth'
    pod 'Firebase/Storage'
    pod 'Firebase/Crashlytics'
+   pod 'SwiftSoup'
+   pod 'ProgressHUD'
+   
 
 
 end
