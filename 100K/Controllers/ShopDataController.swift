@@ -227,22 +227,15 @@ class  ShopDataController: UIViewController {
         itemCount.removeAll()
         
         guard let safeResponse   = databaseArrayResponse else {return }
-//        for item in safeResponse.listingArray {
-//            counts[item] = (counts[item] ?? 0) + 1 // this will always tell me how many items are in the array and int value
-//            for (key, value) in counts {
-//                print("\(key) occurs \(value) time(s)")
-//                itemName.append(key)
-//                itemCount.append(String(value))
-//            }
-//        }
-        
         
         let mappedItems = safeResponse.listingArray.map { ($0, 1) }
         let counts      = Dictionary(mappedItems, uniquingKeysWith: +)
         itemName.append(contentsOf: counts.keys)
         itemCount.append(contentsOf: counts.values)
+        print("DEBUG: DATABASE COUNT = \(safeResponse.listingArray.count)")
+        print("DEBUG: ITEM NAME COUNT = \(itemName.count)")
+        print("DEBUG: ITEM VALUE COUNT = \(itemCount.count)")
         ProgressHUD.dismiss()
-
 
     }
     
@@ -297,7 +290,7 @@ class  ShopDataController: UIViewController {
 extension ShopDataController:UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return databaseArrayResponse.listingArray.count
+        return itemName.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
