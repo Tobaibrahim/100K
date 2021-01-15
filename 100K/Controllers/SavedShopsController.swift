@@ -23,12 +23,12 @@ class SavedShopsController: UIViewController {
     var shopImageUrl          = String() // save url string to database the download image from url???
 
     
-    let searchBar:UISearchBar = {
-        let searchBar         =  UISearchBar(frame: .zero)
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.placeholder = "Search"
-        return searchBar
-    }()
+//    let searchBar:UISearchBar = {
+//        let searchBar         =  UISearchBar(frame: .zero)
+//        searchBar.translatesAutoresizingMaskIntoConstraints = false
+//        searchBar.placeholder = "Search"
+//        return searchBar
+//    }()
     
     let tableView: UITableView = {
         let tv = UITableView()
@@ -110,13 +110,13 @@ class SavedShopsController: UIViewController {
             let tap = UITapGestureRecognizer(target: self.view, action:#selector(UIView.endEditing(_:)))
             tap.cancelsTouchesInView = false
             tableView.addGestureRecognizer(tap)
-            searchBar.delegate     = self
-            searchBar.sizeToFit()
+//            searchBar.delegate     = self
+//            searchBar.sizeToFit()
             tableView.frame        = view.bounds
             tableView.delegate     = self
             view.addSubview(tableView)
-            view.addSubview(searchBar)
-            navigationItem.titleView = searchBar
+//            view.addSubview(searchBar)
+//            navigationItem.titleView = searchBar
             navigationController?.navigationBar.prefersLargeTitles = true
         
     }

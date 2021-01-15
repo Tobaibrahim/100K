@@ -86,7 +86,7 @@ struct AuthService {
     
     func createHoldingValues(key:String,value:[String]) {
         let values  = ["HoldingValues":value]
-        Database.database().reference().child("ShopArray").child("\(key)").child("HoldingValues").updateChildValues(values)
+        Database.database().reference().child("ShopArray").child("\(key)").child("HoldingValues").setValue(values)
     }
     
     
