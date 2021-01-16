@@ -23,7 +23,7 @@ class  ShopDataController: UIViewController {
     var shopName              : String!
     var newArrayItems         = [String]()
     var shopImageUrl          = String() // save url string to database the download image from url???
-    
+
     
     
     
@@ -156,21 +156,14 @@ class  ShopDataController: UIViewController {
 
     
     func addNewItems(values:Int) {
-       
+        
         newArrayItems.append(searchArray[values])   // index issue
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             AuthService.shared.createHoldingValues(key: self.shopName, value: self.searchArray)
         }
-        
         var list = databaseArrayResponse.listingArray
-        print("TEST REMOVE VAL = \(list.last!)")
-        if list.last == "" {
-            list.removeLast()
-        }
-        else {
-            list.insert(contentsOf: self.newArrayItems, at: 0)
-            AuthService.shared.updateShopListingArray(key: self.shopName, value: list) // Find a way to optimise this
-        }
+        list.insert(contentsOf: self.newArrayItems, at: 0)
+        AuthService.shared.updateShopListingArray(key: self.shopName, value: list) // Find a way to optimise this
     }
         
 
@@ -178,7 +171,7 @@ class  ShopDataController: UIViewController {
         
         var changedIndex         = [Int]() // value of index changes
         guard let safeHoldingArrayResponse   = databaseHoldingArray else {return}
-        let difference           = safeHoldingArrayResponse.difference(from:searchArray[0..<safeHoldingArrayResponse.count]).insertions
+        let difference           = safeHoldingArrayResponse.difference(from:searchArray[0..<safeHoldingArrayResponse.count])
 
         for values in difference { // we have to do this because the enums have the values we need then we append the
             switch values {
@@ -226,15 +219,12 @@ class  ShopDataController: UIViewController {
         itemName.removeAll()
         itemCount.removeAll()
         
-        guard let safeResponse   = databaseArrayResponse else {return }
-        
-        let mappedItems = safeResponse.listingArray.map { ($0, 1) }
+        var list = databaseArrayResponse.listingArray
+        list.remove(at: list.firstIndex(of: "")!) // remove empty index
+        let mappedItems = list.map { ($0, 1) }
         let counts      = Dictionary(mappedItems, uniquingKeysWith: +)
         itemName.append(contentsOf: counts.keys)
         itemCount.append(contentsOf: counts.values)
-        print("DEBUG: DATABASE COUNT = \(safeResponse.listingArray.count)")
-        print("DEBUG: ITEM NAME COUNT = \(itemName.count)")
-        print("DEBUG: ITEM VALUE COUNT = \(itemCount.count)")
         ProgressHUD.dismiss()
 
     }
@@ -251,9 +241,9 @@ class  ShopDataController: UIViewController {
         view.backgroundColor   = .systemGray5
         navigationItem.hidesBackButton     = true
         
-        let tap = UITapGestureRecognizer(target: self.view, action:#selector(UIView.endEditing(_:)))
-        tap.cancelsTouchesInView = false
-        tableView.addGestureRecognizer(tap)
+//        let tap = UITapGestureRecognizer(target: self.view, action:#selector(UIView.endEditing(_:)))
+//        tap.cancelsTouchesInView = false
+//        tableView.addGestureRecognizer(tap)
         tableView.frame        = view.bounds
         tableView.delegate     = self
         view.addSubview(tableView)
@@ -287,7 +277,7 @@ class  ShopDataController: UIViewController {
 
 // MARK: - TableView
 
-extension ShopDataController:UITableViewDataSource,UITableViewDelegate {
+extension ShopDataController:UITableViewDataSource,UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemName.count
@@ -304,5 +294,17 @@ extension ShopDataController:UITableViewDataSource,UITableViewDelegate {
     }
     
     
-}
     
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("DEBUG: SHOP ITEM SELECTED")
+        let path          = itemName[indexPath.row]
+        UIPasteboard.general.string = path
+
+        guard let url = URL(string:"https://www.etsy.com/uk/search") else {return}
+        presentSafariVC(with:url)
+
+    }
+    
+
+}

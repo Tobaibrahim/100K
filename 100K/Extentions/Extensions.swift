@@ -6,13 +6,20 @@
 //
 
 import UIKit
+import SafariServices
 
 fileprivate var containerView: UIView!
 
 extension UIViewController {
   
     
-    
+    func presentSafariVC(with url:URL) {
+        
+        let safariVC = SFSafariViewController(url: url)
+        // safari view controller lets us access a safari website within our app instead of opening a new safari window
+        safariVC.preferredControlTintColor = .systemBlue
+        present(safariVC, animated: true)
+    }
     
     
 //    func presentABAlertOnMainThread(title:String,message:String,buttonTitle:String) {
@@ -103,6 +110,31 @@ extension UIViewController {
         translatesAutoresizingMaskIntoConstraints = false
         anchor(top: view.topAnchor, leading: view.leftAnchor,
                bottom: view.bottomAnchor, trailing: view.rightAnchor)
+    }
+    
+}
+
+
+extension String {
+    func stringByAddingPercentEncodingForRFC3986() -> String? {
+        let unreserved = "-._~/?"
+        let allowed = NSMutableCharacterSet.alphanumeric()
+        allowed.addCharacters(in: unreserved)
+        return addingPercentEncoding(withAllowedCharacters: allowed as CharacterSet)
+    }
+    
+    
+    
+    
+    /*
+     Truncates the string to the specified length number of characters and appends an optional trailing string if longer.
+     - Parameter length: Desired maximum lengths of a string
+     - Parameter trailing: A 'String' that will be appended after the truncation.
+     
+     - Returns: 'String' object.
+     */
+    func trunc(length: Int, trailing: String = "") -> String {
+        return (self.count > length) ? self.prefix(length) + trailing : self
     }
     
 }

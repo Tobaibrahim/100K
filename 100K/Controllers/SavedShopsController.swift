@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import SafariServices
 
 
 class SavedShopsController: UIViewController {
@@ -20,15 +21,8 @@ class SavedShopsController: UIViewController {
     var searchArray           = [String]() // save this to the database/ this changes depending on the shop searched and saved shop selected
     var counts                : [String: Int] = [:]
     var newArrayItems         = [String]()
-    var shopImageUrl          = String() // save url string to database the download image from url???
+    var shopName              = String()
 
-    
-//    let searchBar:UISearchBar = {
-//        let searchBar         =  UISearchBar(frame: .zero)
-//        searchBar.translatesAutoresizingMaskIntoConstraints = false
-//        searchBar.placeholder = "Search"
-//        return searchBar
-//    }()
     
     let tableView: UITableView = {
         let tv = UITableView()
@@ -43,30 +37,43 @@ class SavedShopsController: UIViewController {
     
     
     
+    
+    var shopImageUrl: String! {
+
+        didSet {
+            guard let safeResponse = shopImageUrl else {return}
+            AuthService.shared.createShopImageUrls(key: shopName, value: safeResponse) // save shopname to database when the network request is done
+            fetchDatabaseShopImageUrls()
+        }
+
+    }
+    
+    
     var databaseKeysResponse: [String]! {
 
         didSet {
             print("DEBUG:DATABASE KEYS SET")
             guard let safeResponse   = databaseKeysResponse else {return}
             print("DEBUG: KEYS = \(safeResponse)")
+            fetchDatabaseShopImageUrls()
+
+//            DispatchQueue.main.async {self.tableView.reloadData()}
+        }
+
+    }
+    
+    
+    var shopImageUrlResponse: [String]! {
+
+        didSet {
+            print("DEBUG: testArrayResponse SET")
             tableView.dataSource   = self
             DispatchQueue.main.async {self.tableView.reloadData()}
         }
 
     }
     
-    
 
-    
-    
-    // Make a network call and add the latest array of items to the "searchArray" - DONE
-    // Check the database if it has an array, if it does then carry on, if it doesnt add the "searchArray" to the database - DONE
-    // compare the "Search Array to the database array... index specific" - DONE
-    // return the changed indexes for the new added items  - DONE
-    // add those new items to the database -
-    // display the items with a Int,String value in the tableview
-    
-    
     
     // MARK: - LifeCycle
 
@@ -81,11 +88,6 @@ class SavedShopsController: UIViewController {
     
     // MARK: - Requests
     
-   
-
-    // MARK: - Array Validation
-
-    
     
     func fetchDatabaseArray() {
         
@@ -95,12 +97,33 @@ class SavedShopsController: UIViewController {
         }
     }
     
+   private func fetchDatabaseShopImageUrls() {
+        UserService.shared.fetchShopImageUrls() { [weak self] (results) in
+            guard let self = self else {return}
+            self.shopImageUrlResponse = results
+        }
+    }
+    
+    
+    
+    func downloadShopImageURL() {
+        NetworkManager.shared.getShopImage(for: shopName) { (results) in
+            switch results {
+            case .success(let success):
+                self.shopImageUrl = success
+            case .failure(let error):
+                print("DEBUG: ERROR = \(error)")
+            }
+        }
+    }
+    
     
     
     // MARK: - UI
 
     func configureUI() {
             fetchDatabaseArray()
+            
             let addButton          = UIBarButtonItem(image: SFSymbols.addButton, style: .done, target: self, action:#selector(addButtonPressed))
             addButton.tintColor    = .systemBlue
             view.backgroundColor   = .systemGray5
@@ -110,13 +133,11 @@ class SavedShopsController: UIViewController {
             let tap = UITapGestureRecognizer(target: self.view, action:#selector(UIView.endEditing(_:)))
             tap.cancelsTouchesInView = false
             tableView.addGestureRecognizer(tap)
-//            searchBar.delegate     = self
-//            searchBar.sizeToFit()
+
             tableView.frame        = view.bounds
             tableView.delegate     = self
             view.addSubview(tableView)
-//            view.addSubview(searchBar)
-//            navigationItem.titleView = searchBar
+
             navigationController?.navigationBar.prefersLargeTitles = true
         
     }
@@ -138,14 +159,14 @@ class SavedShopsController: UIViewController {
 extension SavedShopsController:UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return databaseKeysResponse.count
+        return shopImageUrlResponse.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
                 
         let cell =  tableView.dequeueReusableCell(withIdentifier: SavedShopCell.reuseID) as! SavedShopCell
         cell.titleLabel.text = databaseKeysResponse[indexPath.row]
-        cell.editImageView.downloadImage(from: shopImageUrl)
+        cell.editImageView.downloadImage(from: (shopImageUrlResponse[indexPath.row]))
         return cell
     }
     
@@ -159,43 +180,35 @@ extension SavedShopsController:UITableViewDataSource,UITableViewDelegate {
     }
     
     
-}
-
-// MARK: - SearchBar
-
-extension SavedShopsController: UISearchBarDelegate {
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        contactKey?.issearching  = true
-//        searchBar.showsCancelButton = true
-//        searchContacts = nameArray.filter({$0.prefix(searchText.count) == searchText})
-//        tableView.reloadData()
-//    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
-        searchBar.showsCancelButton = false
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
+        
+        guard editingStyle == .delete else {return}
+        
+        let path = databaseKeysResponse[indexPath.row]
+        shopImageUrlResponse.remove(at: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .left)
+        AuthService.shared.deleteShop(key: path)
+        fetchDatabaseArray()
+        print(indexPath.row)
     }
     
     
+    
 }
+
+
+
 
 // MARK: - Delegate Methods
 
 extension SavedShopsController:ShopSelectionDelegate {
     func didAddShop(shopName: String) {
+        self.shopName = shopName
         AuthService.shared.updateShopListingArray(key: shopName, value: [""] ) // Find a way to optimise this
         AuthService.shared.createHoldingValues(key: shopName, value: [""])
+        downloadShopImageURL()
         fetchDatabaseArray()
     }
 }
 
-//extension SavedShopsController:UpdateShopData {
-//    func didAddShopData(shopName: String) {
-//        guard let safeResponse   = databaseArrayResponse else {return}
-//        self.shopName = shopName
-//        getShopListings()
-//        destVC.databaseArrayResponse = safeResponse.listingArray
-//    }
-//
-//}

@@ -90,6 +90,17 @@ struct AuthService {
     }
     
     
+    func createShopImageUrls(key:String,value:String) {
+        let values  = [key:value]
+        Database.database().reference().child("ShopImageUrls").updateChildValues(values)
+    }
+    
+    
+    func deleteShop(key:String) {
+        Database.database().reference().child("ShopArray").child("\(key)").removeValue()
+        Database.database().reference().child("ShopImageUrls").child("\(key)").removeValue()
+    }
+    
     
 //    func iniatialCreateShopListingArray(key:String) {
 //        Database.database().reference().child("ShopArray").child("\(key)")

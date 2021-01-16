@@ -180,7 +180,7 @@ class NetworkManager {
 //
     
     
-    func getProfileImage(for ShopName:String,completed:@escaping(Result<String,CustomErrors>) -> Void) {
+    func getShopImage(for ShopName:String,completed:@escaping(Result<String,CustomErrors>) -> Void) {
         
         
         let endpoint = "https://www.etsy.com/uk/shop/\(ShopName)?ref=simple-shop-header-name"

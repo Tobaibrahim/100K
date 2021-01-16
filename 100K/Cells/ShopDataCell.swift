@@ -36,7 +36,7 @@ class ShopDataCell: UITableViewCell {
     
     private func configure () {
         
-        addSubview(editImageView)
+//        addSubview(editImageView)
         addSubview(titleLabel)
         addSubview(shopItemValueLabel)
         accessoryType = .disclosureIndicator
@@ -47,11 +47,11 @@ class ShopDataCell: UITableViewCell {
         editImageView.tintColor   = UIColor.systemGray
         editImageView.layer.cornerRadius = 10
         
-        titleLabel.anchor(top:self.topAnchor,leading: editImageView.leadingAnchor,trailing: self.trailingAnchor,paddingTop: 20, paddingLeft: 60,paddingRight: 185,height: 40)
+        titleLabel.anchor(top:self.topAnchor,leading: self.leadingAnchor,trailing: self.trailingAnchor,paddingTop: 20, paddingLeft: 20,paddingRight: 160,height: 40)
 
-        shopItemValueLabel.anchor(top:self.topAnchor,leading:titleLabel.leadingAnchor,trailing: self.trailingAnchor,paddingTop: 20,paddingLeft: 250,paddingRight: 20,height: 40)
+        shopItemValueLabel.anchor(top:self.topAnchor,leading:titleLabel.leadingAnchor,trailing: self.trailingAnchor,paddingTop: 20,paddingLeft: 320,paddingRight: 20,height: 40)
         
-        editImageView.anchor(top:self.topAnchor ,leading: self.leadingAnchor, paddingTop: 20, paddingLeft: 20, width: 40, height: 40)
+//        editImageView.anchor(top:self.topAnchor ,leading: self.leadingAnchor, paddingTop: 20, paddingLeft: 20, width: 40, height: 40)
     }
     
 }

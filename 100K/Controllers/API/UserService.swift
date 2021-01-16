@@ -90,6 +90,25 @@ struct UserService {
             }
         }
     }
+    
+    
+    
+    func fetchShopImageUrls(completion: @escaping([String]) -> Void) {
+        ref.child("ShopImageUrls").observeSingleEvent(of: .value) {(snapshot) in
+
+            if snapshot.exists() == true {
+                let snap            = snapshot.value as? NSDictionary
+                guard let values    = snap?.allValues else {return}
+                guard let val       = values as? [String] else {return}
+                completion(val)
+            }
+
+            else {
+                completion([""])
+            }
+        }
+    }
+
 
 //    
 //    func setNewData() {
