@@ -182,7 +182,8 @@ extension SearchShopsController:UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let path = searchedshopNames[indexPath.row].lowercased()
-        delegate.didAddShop(shopName: path)
+        let urlPath = searchedshopUrls[indexPath.row]
+        delegate.didAddShop(shopName: path, shopImage: urlPath)
         dismiss(animated: true)
     }
     

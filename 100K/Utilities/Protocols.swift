@@ -9,7 +9,7 @@ import Foundation
 
 
 protocol ShopSelectionDelegate:class {
-    func didAddShop(shopName:String)
+    func didAddShop(shopName:String,shopImage:String)
 }
 
 

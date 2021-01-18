@@ -103,7 +103,7 @@ class  ShopDataController: UIViewController {
         button.setTitle("Update", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         button.layer.cornerRadius = 17
-        button.backgroundColor = UIColor.systemBlue
+        button.backgroundColor = .appPurple
         button.setTitleColor(UIColor(white: 1, alpha: 1),for: .normal)
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.addTarget(self, action: #selector(updateButtonPressed), for: .touchUpInside)
@@ -153,14 +153,11 @@ class  ShopDataController: UIViewController {
             print("DEBUG: CHANGED INDEX = \(result)")
             self.addNewItems(values: self.changedIndexElements)
         }
-        
     }
-    
     
     
     // MARK: - Array Validation
 
-    
     func addNewItems(values:[String]) {
         
 //        newArrayItems.append(searchArray[values])   // index issue
@@ -199,6 +196,9 @@ class  ShopDataController: UIViewController {
     }
     
     
+    
+    // MARK: - Array Validation
+
     private func fetchDatabaseArray() {
         
         UserService.shared.fetchShopKeysArray() { [weak self] (results) in

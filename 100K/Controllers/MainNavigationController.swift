@@ -21,10 +21,19 @@ class MainNavigationController: UINavigationController {
 
     
     override func viewDidLoad() {
-        configureViewControllers()
+        loginScreen()
     }
     
     //MARK: - Helpers
+    
+    
+    func loginScreen() {
+        DispatchQueue.main.async {
+        let nav =  UINavigationController(rootViewController: LoginController())
+        nav.modalPresentationStyle = .fullScreen
+        self.present(nav, animated: false, completion: nil)
+        }
+    }
 
     
     func configureViewControllers() {

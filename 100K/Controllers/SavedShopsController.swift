@@ -44,7 +44,6 @@ class SavedShopsController: UIViewController {
         return image
     }()
     
-    
 
     
     var shopImageUrl: String! {
@@ -66,7 +65,6 @@ class SavedShopsController: UIViewController {
             print("DEBUG: KEYS = \(safeResponse)")
             fetchDatabaseShopImageUrls()
 
-//            DispatchQueue.main.async {self.tableView.reloadData()}
         }
 
     }
@@ -115,16 +113,16 @@ class SavedShopsController: UIViewController {
     
     
     
-    func downloadShopImageURL() {
-        NetworkManager.shared.getShopImage(for: shopName) { (results) in
-            switch results {
-            case .success(let success):
-                self.shopImageUrl = success
-            case .failure(let error):
-                print("DEBUG: ERROR = \(error)")
-            }
-        }
-    }
+//    func downloadShopImageURL() {
+//        NetworkManager.shared.getShopImage(for: shopName) { (results) in
+//            switch results {
+//            case .success(let success):
+//                self.shopImageUrl = success
+//            case .failure(let error):
+//                print("DEBUG: ERROR = \(error)")
+//            }
+//        }
+//    }
     
     
     
@@ -134,7 +132,7 @@ class SavedShopsController: UIViewController {
             fetchDatabaseArray()
             
             let addButton          = UIBarButtonItem(image: SFSymbols.addButton, style: .done, target: self, action:#selector(addButtonPressed))
-            addButton.tintColor    = .systemBlue
+            addButton.tintColor    = .appPurple
             view.backgroundColor   = .systemGray5
             navigationItem.rightBarButtonItem  = addButton
             navigationItem.hidesBackButton     = true
@@ -168,7 +166,7 @@ class SavedShopsController: UIViewController {
 extension SavedShopsController:UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return shopImageUrlResponse.count
+        return databaseKeysResponse.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -194,7 +192,7 @@ extension SavedShopsController:UITableViewDataSource,UITableViewDelegate {
         guard editingStyle == .delete else {return}
         
         let path = databaseKeysResponse[indexPath.row]
-        shopImageUrlResponse.remove(at: indexPath.row)
+        databaseKeysResponse.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .left)
         AuthService.shared.deleteShop(key: path)
         fetchDatabaseArray()
@@ -209,11 +207,12 @@ extension SavedShopsController:UITableViewDataSource,UITableViewDelegate {
 // MARK: - Delegate Methods
 
 extension SavedShopsController:ShopSelectionDelegate {
-    func didAddShop(shopName: String) {
+    func didAddShop(shopName: String,shopImage:String) {
         self.shopName = shopName
         AuthService.shared.updateShopListingArray(key: shopName, value: [""] ) // Find a way to optimise this
         AuthService.shared.createHoldingValues(key: shopName, value: [""])
-        downloadShopImageURL()
+//        downloadShopImageURL()
+        shopImageUrl = shopImage
         fetchDatabaseArray()
     }
 }

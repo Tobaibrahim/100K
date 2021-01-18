@@ -23,5 +23,6 @@ static let addButton       = UIImage(systemName: "plus.app.fill")
 static let pencil          = UIImage(systemName: "pencil.circle")
 static let backArrow       = UIImage(systemName: "arrow.left")
 static let icon            = UIImage(systemName: "person.crop.circle.fill")
+static let plusIcon        = UIImage(systemName: "plus.circle.fill")
 
 }

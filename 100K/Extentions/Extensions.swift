@@ -115,6 +115,11 @@ extension UIViewController {
 }
 
 
+extension UIColor {
+    
+    static let appPurple = UIColor(red: 0.42, green: 0.38, blue: 1.00, alpha: 1.00)
+}
+
 extension String {
     func stringByAddingPercentEncodingForRFC3986() -> String? {
         let unreserved = "-._~/?"
