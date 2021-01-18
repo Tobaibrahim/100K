@@ -36,7 +36,16 @@ class SavedShopsController: UIViewController {
     }()
     
     
+    let placeHolderImage: UIImageView = {
+       let image = UIImageView()
+        image.setDimensions(width: 357, height: 252)
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.image = #imageLiteral(resourceName: "placeholder")
+        return image
+    }()
     
+    
+
     
     var shopImageUrl: String! {
 
@@ -182,7 +191,6 @@ extension SavedShopsController:UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        
         guard editingStyle == .delete else {return}
         
         let path = databaseKeysResponse[indexPath.row]
@@ -192,8 +200,6 @@ extension SavedShopsController:UITableViewDataSource,UITableViewDelegate {
         fetchDatabaseArray()
         print(indexPath.row)
     }
-    
-    
     
 }
 

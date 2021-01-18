@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8467859C25B60EA200448FD5 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467859B25B60EA200448FD5 /* LoginController.swift */; };
+		84A77B9625B3BB5100DE933B /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A77B9525B3BB5100DE933B /* Tests.swift */; };
 		84F818E425B08C1700633248 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F818E325B08C1700633248 /* Protocols.swift */; };
 		84F818E725B094A800633248 /* ShopDataCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F818E625B094A800633248 /* ShopDataCell.swift */; };
 		84FD54EA25A66997008CBB55 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FD54E925A66997008CBB55 /* AppDelegate.swift */; };
@@ -40,6 +42,8 @@
 /* Begin PBXFileReference section */
 		0936CDFAEAE9C79D9DCF6969 /* Pods-100K.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-100K.release.xcconfig"; path = "Target Support Files/Pods-100K/Pods-100K.release.xcconfig"; sourceTree = "<group>"; };
 		3E81C1CE91FDDF6408ED10C2 /* Pods-100K.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-100K.debug.xcconfig"; path = "Target Support Files/Pods-100K/Pods-100K.debug.xcconfig"; sourceTree = "<group>"; };
+		8467859B25B60EA200448FD5 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		84A77B9525B3BB5100DE933B /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		84F818E325B08C1700633248 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		84F818E625B094A800633248 /* ShopDataCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopDataCell.swift; sourceTree = "<group>"; };
 		84FD54E625A66997008CBB55 /* 100K.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 100K.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -178,6 +182,8 @@
 				84FD557225AB9A06008CBB55 /* MainNavigationController.swift */,
 				84FD555B25AB918F008CBB55 /* ShopDataController.swift */,
 				84FD557525AB9AF5008CBB55 /* SearchShopsController.swift */,
+				84A77B9525B3BB5100DE933B /* Tests.swift */,
+				8467859B25B60EA200448FD5 /* LoginController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -335,6 +341,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84FD556025AB925E008CBB55 /* ImageView.swift in Sources */,
+				84A77B9625B3BB5100DE933B /* Tests.swift in Sources */,
 				84FD557625AB9AF5008CBB55 /* SearchShopsController.swift in Sources */,
 				84FD553F25A7B3CC008CBB55 /* ShopListingArray.swift in Sources */,
 				84F818E425B08C1700633248 /* Protocols.swift in Sources */,
@@ -352,6 +359,7 @@
 				84FD550D25A66C1E008CBB55 /* Listings.swift in Sources */,
 				84FD555725AB6AFF008CBB55 /* SavedShopCell.swift in Sources */,
 				84FD556F25AB962E008CBB55 /* Extensions.swift in Sources */,
+				8467859C25B60EA200448FD5 /* LoginController.swift in Sources */,
 				84FD551325A66C64008CBB55 /* SearchedShop.swift in Sources */,
 				84FD556625AB92C8008CBB55 /* TitleLabel.swift in Sources */,
 				84FD556525AB92C8008CBB55 /* BodyLabel.swift in Sources */,

@@ -23,7 +23,7 @@ class  ShopDataController: UIViewController {
     var shopName              : String!
     var newArrayItems         = [String]()
     var shopImageUrl          = String() // save url string to database the download image from url???
-
+    var changedIndexElements  = [String]()
     
     
     
@@ -74,6 +74,7 @@ class  ShopDataController: UIViewController {
     var networkRequestArrayResponse: ListingsResponse! {
         
         didSet {
+//            searchArray.removeAll()
             print("DEBUG:DATA RESPONSE SET")
             guard let safeResponse   = networkRequestArrayResponse else {return}
             safeResponse.results.forEach { (result) in searchArray.append(result.title)}
@@ -109,6 +110,14 @@ class  ShopDataController: UIViewController {
         return button
     }()
     
+    let placeHolderImage: UIImageView = {
+       let image = UIImageView()
+        image.setDimensions(width: 357, height: 252)
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.image = #imageLiteral(resourceName: "placeholder")
+        return image
+    }()
+    
     
     
     // MARK: - LifeCycle
@@ -140,12 +149,9 @@ class  ShopDataController: UIViewController {
     // MARK: - Array Algorithm
 
     func changedIndexValuesFromLoop() {
-        validateArray {[weak self](result) in
-            guard let self = self else {return}
+        validateArray {(result) in
             print("DEBUG: CHANGED INDEX = \(result)")
-            result.forEach { (value) in
-                self.addNewItems(values: value)
-            }
+            self.addNewItems(values: self.changedIndexElements)
         }
         
     }
@@ -155,36 +161,40 @@ class  ShopDataController: UIViewController {
     // MARK: - Array Validation
 
     
-    func addNewItems(values:Int) {
+    func addNewItems(values:[String]) {
         
-        newArrayItems.append(searchArray[values])   // index issue
+//        newArrayItems.append(searchArray[values])   // index issue
+        AuthService.shared.createHoldingValues(key: self.shopName, value: self.searchArray)
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            AuthService.shared.createHoldingValues(key: self.shopName, value: self.searchArray)
-        }
-        var list = databaseArrayResponse.listingArray
-        list.insert(contentsOf: self.newArrayItems, at: 0)
+        var list = self.databaseArrayResponse.listingArray
+            if list.first == "" {
+                list.remove(at: 0)
+            }
+        list.insert(contentsOf: self.changedIndexElements, at: 0)
         AuthService.shared.updateShopListingArray(key: self.shopName, value: list) // Find a way to optimise this
+        }
     }
         
 
     func validateArray(completion:@escaping([Int]) -> Void){
-        
+        changedIndexElements.removeAll()
         var changedIndex         = [Int]() // value of index changes
         guard let safeHoldingArrayResponse   = databaseHoldingArray else {return}
-        let difference           = safeHoldingArrayResponse.difference(from:searchArray[0..<safeHoldingArrayResponse.count])
+        let difference           = safeHoldingArrayResponse.difference(from:searchArray[0..<safeHoldingArrayResponse.count]).insertions
 
         for values in difference { // we have to do this because the enums have the values we need then we append the
             switch values {
-            case.insert(let offset, _, _):
+            case.insert(let offset, let elements, _):
                 // this case gives me access to the changed values (offset)
                 changedIndex.append(offset)
+                changedIndexElements.append(elements)
 
             case .remove(offset:_ , element: _, associatedWith:_):
                 break
             }
         }
         print("DEBUG: CHANGED INDEX = \([changedIndex])")
-       
+        print("DEBUG: SEARCH ARRAY = \(searchArray)")
             completion(changedIndex)
     }
     
@@ -218,14 +228,20 @@ class  ShopDataController: UIViewController {
         counts.removeAll()
         itemName.removeAll()
         itemCount.removeAll()
+
         
         var list = databaseArrayResponse.listingArray
+        if list.first == "" {
         list.remove(at: list.firstIndex(of: "")!) // remove empty index
+        }
         let mappedItems = list.map { ($0, 1) }
         let counts      = Dictionary(mappedItems, uniquingKeysWith: +)
         itemName.append(contentsOf: counts.keys)
         itemCount.append(contentsOf: counts.values)
+        updateButton.isHidden = false
+
         ProgressHUD.dismiss()
+        searchArray.removeAll()
 
     }
     
@@ -235,6 +251,7 @@ class  ShopDataController: UIViewController {
     private func configureUI() {
         ProgressHUD.animationType = .circleStrokeSpin
         tableView.isHidden = true
+        updateButton.isHidden = true
         let exitButton          = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(exitButtonPressed))
         exitButton.tintColor    = .systemBlue
         navigationItem.rightBarButtonItem  = exitButton
@@ -248,10 +265,12 @@ class  ShopDataController: UIViewController {
         tableView.delegate     = self
         view.addSubview(tableView)
         view.addSubview(updateButton)
+        view.addSubview(placeHolderImage)
         navigationController?.navigationBar.prefersLargeTitles = false
         
         updateButton.centerX(inView: view, topAnchor: view.safeAreaLayoutGuide.bottomAnchor, paddingTop: -90)
         updateButton.anchor(leading:view.leadingAnchor,trailing: view.trailingAnchor,paddingLeft: 60,paddingRight: 60)
+        placeHolderImage.centerX(inView: view, topAnchor: view.topAnchor, paddingTop: 160)
     }
     
     
@@ -263,11 +282,14 @@ class  ShopDataController: UIViewController {
         tableView.isHidden = false
         getShopListings()
         updateButton.isHidden = true
+        placeHolderImage.isHidden = true
+
 
     }
     
     @objc func exitButtonPressed() {
         dismiss(animated: true)
+        placeHolderImage.isHidden = false
     }
 
     
@@ -293,9 +315,7 @@ extension ShopDataController:UITableViewDataSource,UITableViewDelegate{
         return cell
     }
     
-    
-    
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("DEBUG: SHOP ITEM SELECTED")
         let path          = itemName[indexPath.row]

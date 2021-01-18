@@ -101,27 +101,7 @@ struct AuthService {
         Database.database().reference().child("ShopImageUrls").child("\(key)").removeValue()
     }
     
-    
-//    func iniatialCreateShopListingArray(key:String) {
-//        Database.database().reference().child("ShopArray").child("\(key)")
-//    }
-//    
-//    func iniatialCreateHoldingValues(key:String) {
-//        let values  = ["HoldingValues":Any]
-//        Database.database().reference().child("ShopArray").child("\(key)").child("HoldingValues").updateChildValues(values)
-//    }
-//    
-//    
-    
-    
 
-    
-    
-    
-    
-    
-    
-    
     func createDefaultAdUnit (key:String,value:String) {
         let values = [key:value]
         Database.database().reference().child("adUnitValue").updateChildValues(values)
