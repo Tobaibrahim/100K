@@ -17,7 +17,7 @@ extension UIViewController {
         
         let safariVC = SFSafariViewController(url: url)
         // safari view controller lets us access a safari website within our app instead of opening a new safari window
-        safariVC.preferredControlTintColor = .systemBlue
+        safariVC.preferredControlTintColor = .appPurple
         present(safariVC, animated: true)
     }
     

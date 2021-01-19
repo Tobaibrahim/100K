@@ -177,7 +177,8 @@ class  ShopDataController: UIViewController {
         changedIndexElements.removeAll()
         var changedIndex         = [Int]() // value of index changes
         guard let safeHoldingArrayResponse   = databaseHoldingArray else {return}
-        let difference           = safeHoldingArrayResponse.difference(from:searchArray[0..<safeHoldingArrayResponse.count]).insertions
+//        let safeHoldingCount = safeHoldingArrayResponse.count
+        let difference       = searchArray.difference(from:safeHoldingArrayResponse[0..<searchArray.count]).insertions
 
         for values in difference { // we have to do this because the enums have the values we need then we append the
             switch values {
@@ -228,7 +229,7 @@ class  ShopDataController: UIViewController {
         counts.removeAll()
         itemName.removeAll()
         itemCount.removeAll()
-
+        
         
         var list = databaseArrayResponse.listingArray
         if list.first == "" {
@@ -242,7 +243,6 @@ class  ShopDataController: UIViewController {
 
         ProgressHUD.dismiss()
         searchArray.removeAll()
-
     }
     
     

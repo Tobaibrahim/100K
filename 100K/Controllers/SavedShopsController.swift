@@ -127,25 +127,28 @@ class SavedShopsController: UIViewController {
     
     
     // MARK: - UI
-
+    
     func configureUI() {
-            fetchDatabaseArray()
-            
-            let addButton          = UIBarButtonItem(image: SFSymbols.addButton, style: .done, target: self, action:#selector(addButtonPressed))
-            addButton.tintColor    = .appPurple
-            view.backgroundColor   = .systemGray5
-            navigationItem.rightBarButtonItem  = addButton
-            navigationItem.hidesBackButton     = true
-            
-            let tap = UITapGestureRecognizer(target: self.view, action:#selector(UIView.endEditing(_:)))
-            tap.cancelsTouchesInView = false
-            tableView.addGestureRecognizer(tap)
-
-            tableView.frame        = view.bounds
-            tableView.delegate     = self
-            view.addSubview(tableView)
-
-            navigationController?.navigationBar.prefersLargeTitles = true
+        
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+        tableView.addGestureRecognizer(longPress)
+        fetchDatabaseArray()
+        
+        let addButton          = UIBarButtonItem(image: SFSymbols.addButton, style: .done, target: self, action:#selector(addButtonPressed))
+        addButton.tintColor    = .appPurple
+        view.backgroundColor   = .systemGray5
+        navigationItem.rightBarButtonItem  = addButton
+        navigationItem.hidesBackButton     = true
+        
+        let tap = UITapGestureRecognizer(target: self.view, action:#selector(UIView.endEditing(_:)))
+        tap.cancelsTouchesInView = false
+        tableView.addGestureRecognizer(tap)
+        
+        tableView.frame        = view.bounds
+        tableView.delegate     = self
+        view.addSubview(tableView)
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
         
     }
     
@@ -159,7 +162,26 @@ class SavedShopsController: UIViewController {
     }
     
     
+    
+    @objc func handleLongPress(sender: UILongPressGestureRecognizer) {
+        
+        if sender.state == UIGestureRecognizer.State.began {
+            let touchPoint = sender.location(in: tableView)
+            if let indexPath = tableView.indexPathForRow(at: touchPoint) {
+                let namePath = databaseKeysResponse[indexPath.row]
+                guard let url = URL(string: "https://www.etsy.com/uk/shop/\(namePath)") else {return}
+                presentSafariVC(with: url)
+                print("DEBUG: \(indexPath)")
+                // your code here, get the row for the indexPath or do whatever you want
+                print("Long press Pressed:)")
+            }
+        }
+    }
+    
 }
+    
+    
+
 
 // MARK: - TableView
 
