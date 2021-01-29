@@ -15,7 +15,7 @@ class NetworkManager {
     
     let cache             = NSCache<NSString,UIImage>()
     private let baseURL   = "https://openapi.etsy.com/v2/"
-    private var key       = "ej72ztgt3p04ddxrbuil4ixz" // secure in refactoring
+    private var key       = "" // secure in refactoring
     
     
     private init () {}
