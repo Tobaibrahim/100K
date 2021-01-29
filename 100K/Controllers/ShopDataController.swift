@@ -24,9 +24,8 @@ class  ShopDataController: UIViewController {
     var newArrayItems         = [String]()
     var shopImageUrl          = String() // save url string to database the download image from url???
     var changedIndexElements  = [String]()
-    
-    
-    
+    var itemCount             = [Int]()
+    var itemName              = [String]()
     
     
     var databaseKeysResponse  : [String]! {
@@ -35,7 +34,6 @@ class  ShopDataController: UIViewController {
             print("DEBUG:DATABASE KEYS SET")
             guard let safeResponse   = databaseKeysResponse else {return}
             print("DEBUG: KEYS = \(safeResponse)")
-
         }
 
     }
@@ -58,10 +56,7 @@ class  ShopDataController: UIViewController {
             print("DEBUG:DATABASE RESPONSE SET")
             guard let safeResponse   = databaseArrayResponse else {return}
             
-//            if safeResponse.listingArray.isEmpty {
-////                let empty:[String] = []
-////                AuthService.shared.createHoldingValues(key: shopName, value: empty  )
-//            }
+
             changedIndexValuesFromLoop()
             self.GetShopData()
             self.tableView.dataSource = self
@@ -82,9 +77,6 @@ class  ShopDataController: UIViewController {
         }
     }
    
-    
-    var itemCount = [Int]()
-    var itemName  = [String]()
 
     let tableView: UITableView = {
         let tv = UITableView()
@@ -178,7 +170,7 @@ class  ShopDataController: UIViewController {
         var changedIndex         = [Int]() // value of index changes
         guard let safeHoldingArrayResponse   = databaseHoldingArray else {return}
 //        let safeHoldingCount = safeHoldingArrayResponse.count
-        let difference       = searchArray.difference(from:safeHoldingArrayResponse[0..<searchArray.count]).insertions
+        let difference       = safeHoldingArrayResponse.difference(from:searchArray[0..<safeHoldingArrayResponse.count]).insertions
 
         for values in difference { // we have to do this because the enums have the values we need then we append the
             switch values {
@@ -258,9 +250,6 @@ class  ShopDataController: UIViewController {
         view.backgroundColor   = .systemGray5
         navigationItem.hidesBackButton     = true
         
-//        let tap = UITapGestureRecognizer(target: self.view, action:#selector(UIView.endEditing(_:)))
-//        tap.cancelsTouchesInView = false
-//        tableView.addGestureRecognizer(tap)
         tableView.frame        = view.bounds
         tableView.delegate     = self
         view.addSubview(tableView)
@@ -272,8 +261,6 @@ class  ShopDataController: UIViewController {
         updateButton.anchor(leading:view.leadingAnchor,trailing: view.trailingAnchor,paddingLeft: 60,paddingRight: 60)
         placeHolderImage.centerX(inView: view, topAnchor: view.topAnchor, paddingTop: 160)
     }
-    
-    
     
     
 // MARK: Selectors
@@ -307,24 +294,21 @@ extension ShopDataController:UITableViewDataSource,UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell =  tableView.dequeueReusableCell(withIdentifier: ShopDataCell.reuseID) as! ShopDataCell
-            cell.accessoryType   = .none
+            cell.accessoryType       = .none
 
-        cell.shopItemValueLabel.text = String(itemCount[indexPath.row])
-        cell.titleLabel.text         = itemName[indexPath.row]
-            
+        cell.shopItemValueLabel.text = String(itemCount.sorted().reversed()[indexPath.row]) // sorted the collection view based on highest value
+        cell.titleLabel.text         = itemName.sorted().reversed()[indexPath.row]
         return cell
     }
     
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("DEBUG: SHOP ITEM SELECTED")
-        let path          = itemName[indexPath.row]
+        let path          = itemName.sorted().reversed()[indexPath.row]
         UIPasteboard.general.string = path
-
-        guard let url = URL(string:"https://www.etsy.com/uk/search") else {return}
+        guard let url     = URL(string:"https://www.etsy.com/uk/search") else {return}
         presentSafariVC(with:url)
 
     }
     
-
 }

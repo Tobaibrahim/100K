@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840457C425B8805E0046B772 /* Vibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840457C325B8805E0046B772 /* Vibration.swift */; };
 		8467859C25B60EA200448FD5 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467859B25B60EA200448FD5 /* LoginController.swift */; };
 		84A77B9625B3BB5100DE933B /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A77B9525B3BB5100DE933B /* Tests.swift */; };
 		84F818E425B08C1700633248 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F818E325B08C1700633248 /* Protocols.swift */; };
@@ -42,6 +43,7 @@
 /* Begin PBXFileReference section */
 		0936CDFAEAE9C79D9DCF6969 /* Pods-100K.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-100K.release.xcconfig"; path = "Target Support Files/Pods-100K/Pods-100K.release.xcconfig"; sourceTree = "<group>"; };
 		3E81C1CE91FDDF6408ED10C2 /* Pods-100K.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-100K.debug.xcconfig"; path = "Target Support Files/Pods-100K/Pods-100K.debug.xcconfig"; sourceTree = "<group>"; };
+		840457C325B8805E0046B772 /* Vibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vibration.swift; sourceTree = "<group>"; };
 		8467859B25B60EA200448FD5 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 		84A77B9525B3BB5100DE933B /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		84F818E325B08C1700633248 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 				84FD550725A66B94008CBB55 /* CustomErrors.swift */,
 				84FD556A25AB95EC008CBB55 /* SFSymbols.swift */,
 				84F818E325B08C1700633248 /* Protocols.swift */,
+				840457C325B8805E0046B772 /* Vibration.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -364,6 +367,7 @@
 				84FD556625AB92C8008CBB55 /* TitleLabel.swift in Sources */,
 				84FD556525AB92C8008CBB55 /* BodyLabel.swift in Sources */,
 				84FD54EC25A66997008CBB55 /* SceneDelegate.swift in Sources */,
+				840457C425B8805E0046B772 /* Vibration.swift in Sources */,
 				84FD555C25AB918F008CBB55 /* ShopDataController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -515,7 +519,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WYVZR7NGA5;
 				INFOPLIST_FILE = 100K/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -536,7 +540,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WYVZR7NGA5;
 				INFOPLIST_FILE = 100K/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

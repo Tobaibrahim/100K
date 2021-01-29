@@ -49,7 +49,7 @@ class ShopDataCell: UITableViewCell {
         
         titleLabel.anchor(top:self.topAnchor,leading: self.leadingAnchor,trailing: self.trailingAnchor,paddingTop: 20, paddingLeft: 20,paddingRight: 160,height: 40)
 
-        shopItemValueLabel.anchor(top:self.topAnchor,leading:titleLabel.leadingAnchor,trailing: self.trailingAnchor,paddingTop: 20,paddingLeft: 320,paddingRight: 20,height: 40)
+        shopItemValueLabel.anchor(top:self.topAnchor,leading:titleLabel.leadingAnchor,trailing: self.trailingAnchor,paddingTop: 20,paddingLeft: self.frame.width - 50,paddingRight: 20,height: 40)
         
 //        editImageView.anchor(top:self.topAnchor ,leading: self.leadingAnchor, paddingTop: 20, paddingLeft: 20, width: 40, height: 40)
     }

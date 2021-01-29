@@ -17,20 +17,7 @@ struct UserService {
     
     
     
-    
- 
 
-//    func fetchStockQuantity(completion: @escaping(StockQuantity,[String]) -> Void) {
-//        ref.child("shirts").observeSingleEvent(of: .value) {(snapshot) in
-//            guard let dictionary    = snapshot.value as? [String:AnyObject] else {return}
-//            let snapshopValue       = snapshot.value as? NSDictionary
-//            let value = StockQuantity(dictionary: dictionary)
-//            guard let keys  = snapshopValue?.allKeys as? [String] else {return}
-////            print(snapshopValue?.allKeys)
-//            completion(value, keys)
-//
-//        }}
-    
     
     func fetchShopListingsArray(name:String,completion: @escaping(ShopListingArray) -> Void) {
         ref.child("ShopArray").child(name).child(name).observeSingleEvent(of: .value) {(snapshot) in

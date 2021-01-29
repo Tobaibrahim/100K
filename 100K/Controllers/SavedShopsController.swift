@@ -8,6 +8,8 @@
 import UIKit
 import Firebase
 import SafariServices
+import AudioToolbox
+
 
 
 class SavedShopsController: UIViewController {
@@ -112,24 +114,12 @@ class SavedShopsController: UIViewController {
     }
     
     
-    
-//    func downloadShopImageURL() {
-//        NetworkManager.shared.getShopImage(for: shopName) { (results) in
-//            switch results {
-//            case .success(let success):
-//                self.shopImageUrl = success
-//            case .failure(let error):
-//                print("DEBUG: ERROR = \(error)")
-//            }
-//        }
-//    }
-    
-    
+
     
     // MARK: - UI
     
     func configureUI() {
-        
+        tableView.contentSize.height = 200
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         tableView.addGestureRecognizer(longPress)
         fetchDatabaseArray()
@@ -146,6 +136,7 @@ class SavedShopsController: UIViewController {
         
         tableView.frame        = view.bounds
         tableView.delegate     = self
+        tableView.contentInset.bottom = 80 // space to the bottom of the tableview
         view.addSubview(tableView)
         
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -171,6 +162,7 @@ class SavedShopsController: UIViewController {
                 let namePath = databaseKeysResponse[indexPath.row]
                 guard let url = URL(string: "https://www.etsy.com/uk/shop/\(namePath)") else {return}
                 presentSafariVC(with: url)
+                AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
                 print("DEBUG: \(indexPath)")
                 // your code here, get the row for the indexPath or do whatever you want
                 print("Long press Pressed:)")
@@ -233,7 +225,6 @@ extension SavedShopsController:ShopSelectionDelegate {
         self.shopName = shopName
         AuthService.shared.updateShopListingArray(key: shopName, value: [""] ) // Find a way to optimise this
         AuthService.shared.createHoldingValues(key: shopName, value: [""])
-//        downloadShopImageURL()
         shopImageUrl = shopImage
         fetchDatabaseArray()
     }
